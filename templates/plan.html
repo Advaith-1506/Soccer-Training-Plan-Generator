@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+  <h2>Plan for {{ player.name }}</h2>
+  <p>Total Duration: {{ plan.total_duration_minutes }} minutes</p>
+  <table>
+    <thead>
+      <tr><th>Drill</th><th>Category</th><th>Level</th><th>Intensity</th><th>Duration</th></tr>
+    </thead>
+    <tbody>
+      {% for d in plan.drills %}
+      <tr>
+        <td>{{ d.name }}</td>
+        <td><span class="tag">{{ d.category }}</span></td>
+        <td><span class="tag">{{ d.level }}</span></td>
+        <td>
+          <div class="tooltip">
+            <span class="tag">{{ d.intensity }}</span>
+            <div class="tooltip-content">Why this drill? Tailored to current session.</div>
+          </div>
+        </td>
+        <td>{{ d.duration_minutes }}m</td>
+      </tr>
+      <tr>
+        <td colspan="5" class="hint">
+          Why:
+          {% if d.category %}{{ d.category|capitalize }} focus{% else %}General{% endif %}
+          • Level: {{ d.level }}
+          • Intensity: {{ d.intensity }}
+          • Duration: {{ d.duration_minutes }}m
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h3>Override</h3>
+  <form method="post" action="/plans/{{ player.id }}/override" data-confirm="true">
+    <label>Intensity Cap <input type="number" name="intensity_cap" min="1" max="10"></label>
+    <button class="btn" type="submit">Apply</button>
+  </form>
+</section>
+{% endblock %}

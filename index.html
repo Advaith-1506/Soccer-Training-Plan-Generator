@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soccer Training Plan Generator</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .training-day {
+            transition: all 0.3s ease;
+        }
+        
+        .training-day:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .skill-meter {
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .skill-meter-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #10b981);
+            transition: width 0.5s ease;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-blue-600 mb-4">
+                <i class="fas fa-futbol mr-2"></i> Soccer Training Plan Generator
+            </h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Get a personalized weekly training plan tailored to your skill level, position, and goals.
+            </p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Form Section -->
+            <div class="w-full lg:w-1/3 bg-white rounded-xl shadow-md p-6 h-fit sticky top-4">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6">
+                    <i class="fas fa-user-edit mr-2 text-blue-500"></i> Player Profile
+                </h2>
+                
+                <form id="trainingForm" class="space-y-6">
+                    <!-- Name -->
+                    <div>
+                        <label for="playerName" class="block text-sm font-medium text-gray-700 mb-1">
+                            Player Name
+                        </label>
+                        <input type="text" id="playerName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Enter your name">
+                    </div>
+                    
+                    <!-- Age -->
+                    <div>
+                        <label for="playerAge" class="block text-sm font-medium text-gray-700 mb-1">
+                            Age
+                        </label>
+                        <input type="number" id="playerAge" min="8" max="60" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Enter your age">
+                    </div>
+                    
+                    <!-- Position -->
+                    <div>
+                        <label for="playerPosition" class="block text-sm font-medium text-gray-700 mb-1">
+                            Primary Position
+                        </label>
+                        <select id="playerPosition" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                            <option value="">Select position</option>
+                            <option value="Goalkeeper">Goalkeeper</option>
+                            <option value="Defender">Defender (Center Back, Full Back)</option>
+                            <option value="Midfielder">Midfielder (Defensive, Central, Winger)</option>
+                            <option value="Forward">Forward (Striker, Winger)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Skill Level -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Skill Level
+                        </label>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs text-gray-500">Beginner</span>
+                            <span class="text-xs text-gray-500">Intermediate</span>
+                            <span class="text-xs text-gray-500">Advanced</span>
+                            <span class="text-xs text-gray-500">Professional</span>
+                        </div>
+                        <input type="range" id="skillLevel" min="1" max="4" value="2" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        <div class="skill-meter mt-2">
+                            <div class="skill-meter-fill" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Training Goals -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">
+                            Training Focus Areas
+                        </label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="endurance" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="endurance" class="ml-2 text-sm text-gray-700">Endurance</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="ballControl" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked>
+                                <label for="ballControl" class="ml-2 text-sm text-gray-700">Ball Control</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="shooting" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked>
+                                <label for="shooting" class="ml-2 text-sm text-gray-700">Shooting</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="passing" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="passing" class="ml-2 text-sm text-gray-700">Passing</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="tactics" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="tactics" class="ml-2 text-sm text-gray-700">Tactics</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="strength" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="strength" class="ml-2 text-sm text-gray-700">Strength</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Training Days -->
+                    <div>
+                        <label for="trainingDays" class="block text-sm font-medium text-gray-700 mb-1">
+                            Training Days Per Week
+                        </label>
+                        <select id="trainingDays" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                            <option value="3">3 days</option>
+                            <option value="4" selected>4 days</option>
+                            <option value="5">5 days</option>
+                            <option value="6">6 days</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Session Duration -->
+                    <div>
+                        <label for="sessionDuration" class="block text-sm font-medium text-gray-700 mb-1">
+                            Session Duration
+                        </label>
+                        <select id="sessionDuration" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                            <option value="60">60 minutes</option>
+                            <option value="90" selected>90 minutes</option>
+                            <option value="120">120 minutes</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Additional Notes -->
+                    <div>
+                        <label for="additionalNotes" class="block text-sm font-medium text-gray-700 mb-1">
+                            Additional Notes
+                        </label>
+                        <textarea id="additionalNotes" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Any specific needs or goals?"></textarea>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" id="generateBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-300 flex items-center justify-center">
+                        <i class="fas fa-magic mr-2"></i> Generate Training Plan
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="w-full lg:w-2/3">
+                <div id="loadingIndicator" class="hidden bg-white rounded-xl shadow-md p-8 text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                    <h3 class="text-xl font-semibold text-gray-800">Creating your personalized training plan...</h3>
+                    <p class="text-gray-600 mt-2">This may take a few moments</p>
+                </div>
+                
+                <div id="resultsContainer" class="hidden bg-white rounded-xl shadow-md p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-800">
+                            <i class="fas fa-calendar-alt mr-2 text-blue-500"></i> Your Training Plan
+                        </h2>
+                        <button id="exportBtn" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300 flex items-center">
+                            <i class="fas fa-file-pdf mr-2"></i> Export PDF
+                        </button>
+                    </div>
+                    
+                    <div id="playerSummary" class="bg-blue-50 rounded-lg p-4 mb-6">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                            <div>
+                                <h3 class="text-lg font-medium text-blue-800" id="summaryName">Player Name</h3>
+                                <p class="text-gray-600">
+                                    <span id="summaryAge">Age</span> • <span id="summaryPosition">Position</span> • <span id="summaryLevel">Skill Level</span>
+                                </p>
+                            </div>
+                            <div class="mt-2 md:mt-0">
+                                <p class="text-sm text-gray-600">
+                                    <i class="fas fa-calendar-week mr-1"></i> <span id="summaryDays">X</span> training days • <span id="summaryDuration">XX</span> minutes per session
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="trainingPlan" class="space-y-6">
+                        <!-- Training days will be inserted here by JavaScript -->
+                    </div>
+                    
+                    <div id="motivationalNote" class="mt-8 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-lightbulb text-yellow-500 text-xl"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-yellow-800">Motivational Tip</h3>
+                                <div class="mt-1 text-sm text-yellow-700">
+                                    <p id="motivationText">Consistency is key to improvement. Stick to your plan and track your progress!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Empty State -->
+                <div id="emptyState" class="bg-white rounded-xl shadow-md p-12 text-center">
+                    <div class="mx-auto h-24 w-24 text-gray-400 mb-4">
+                        <i class="fas fa-futbol text-6xl opacity-30"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-1">No Training Plan Generated Yet</h3>
+                    <p class="text-gray-500 max-w-md mx-auto">
+                        Fill out the player profile form and click "Generate Training Plan" to get your personalized soccer training program.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Skill level meter update
+            const skillLevelInput = document.getElementById('skillLevel');
+            const skillMeterFill = document.querySelector('.skill-meter-fill');
+            
+            skillLevelInput.addEventListener('input', function() {
+                const percent = (this.value - 1) / 3 * 100;
+                skillMeterFill.style.width = percent + '%';
+            });
+            
+            // Form submission
+            const form = document.getElementById('trainingForm');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const emptyState = document.getElementById('emptyState');
+            const trainingPlan = document.getElementById('trainingPlan');
+            const generateBtn = document.getElementById('generateBtn');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Show loading indicator
+                loadingIndicator.classList.remove('hidden');
+                resultsContainer.classList.add('hidden');
+                emptyState.classList.add('hidden');
+                
+                // Disable button during generation
+                generateBtn.disabled = true;
+                generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Generating...';
+                
+                // Simulate API call with timeout
+                setTimeout(() => {
+                    generateTrainingPlan();
+                    
+                    // Hide loading indicator and show results
+                    loadingIndicator.classList.add('hidden');
+                    resultsContainer.classList.remove('hidden');
+                    generateBtn.disabled = false;
+                    generateBtn.innerHTML = '<i class="fas fa-magic mr-2"></i> Generate Training Plan';
+                }, 2000);
+            });
+            
+            // Export PDF button
+            document.getElementById('exportBtn').addEventListener('click', function() {
+                alert('PDF export functionality would be implemented here. In a real app, this would generate a PDF of the training plan.');
+            });
+            
+            // Function to generate training plan (mock data for demo)
+            function generateTrainingPlan() {
+                // Get form values
+                const playerName = document.getElementById('playerName').value || 'Player';
+                const playerAge = document.getElementById('playerAge').value || '--';
+                const playerPosition = document.getElementById('playerPosition').value || 'Not specified';
+                const skillLevel = document.getElementById('skillLevel').value;
+                const trainingDays = document.getElementById('trainingDays').value;
+                const sessionDuration = document.getElementById('sessionDuration').value;
+                
+                // Update player summary
+                document.getElementById('summaryName').textContent = playerName;
+                document.getElementById('summaryAge').textContent = playerAge + ' years';
+                document.getElementById('summaryPosition').textContent = playerPosition;
+                
+                // Map skill level to text
+                const skillLevels = ['Beginner', 'Intermediate', 'Advanced', 'Professional'];
+                document.getElementById('summaryLevel').textContent = skillLevels[skillLevel - 1];
+                
+                document.getElementById('summaryDays').textContent = trainingDays;
+                document.getElementById('summaryDuration').textContent = sessionDuration;
+                
+                // Generate training days
+                trainingPlan.innerHTML = '';
+                const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                
+                for (let i = 0; i < trainingDays; i++) {
+                    const day = daysOfWeek[i];
+                    const drills = generateDrillsForDay(i, skillLevel, playerPosition, sessionDuration);
+                    
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'training-day bg-white border border-gray-200 rounded-xl overflow-hidden fade-in';
+                    dayElement.style.animationDelay = `${i * 0.1}s`;
+                    
+                    dayElement.innerHTML = `
+                        <div class="border-b border-gray-200 bg-gray-50 px-6 py-3">
+                            <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                                <i class="fas fa-calendar-day text-blue-500 mr-2"></i> ${day}
+                            </h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                ${drills.map(drill => `
+                                    <div class="border-l-4 border-blue-500 pl-4 py-1">
+                                        <div class="flex justify-between items-start">
+                                            <h4 class="font-medium text-gray-800">${drill.name}</h4>
+                                            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">${drill.duration} min</span>
+                                        </div>
+                                        <p class="text-sm text-gray-600 mt-1">${drill.description}</p>
+                                        <div class="mt-2 flex items-center text-xs text-gray-500">
+                                            <span class="mr-2">Difficulty:</span>
+                                            ${Array.from({length: drill.difficulty}, (_, i) => '<i class="fas fa-star text-yellow-400"></i>').join('')}
+                                            ${Array.from({length: 5 - drill.difficulty}, (_, i) => '<i class="far fa-star text-yellow-400"></i>').join('')}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    
+                    trainingPlan.appendChild(dayElement);
+                }
+                
+                // Generate motivational tip
+                const motivationalTips = [
+                    "Success is no accident. It is hard work, perseverance, learning, studying, sacrifice and most of all, love of what you are doing.",
+                    "The more difficult the victory, the greater the happiness in winning.",
+                    "You have to fight to reach your dream. You have to sacrifice and work hard for it.",
+                    "Quality without results is pointless. Results without quality is boring.",
+                    "Talent without working hard is nothing.",
+                    "The only way to prove you're a good sport is to lose.",
+                    "I always want more. Whether it's a goal, a game or whatever, I always want to do better."
+                ];
+                
+                document.getElementById('motivationText').textContent = 
+                    motivationalTips[Math.floor(Math.random() * motivationalTips.length)];
+            }
+            
+            // Function to generate mock drills for a day
+            function generateDrillsForDay(dayIndex, skillLevel, position, duration) {
+                const allDrills = {
+                    warmup: [
+                        {
+                            name: "Dynamic Warm-up",
+                            description: "10 minutes of jogging, high knees, butt kicks, side shuffles, and dynamic stretches to prepare your muscles.",
+                            duration: 10,
+                            difficulty: 1
+                        },
+                        {
+                            name: "Ball Mastery Warm-up",
+                            description: "Basic ball control exercises including toe taps, rolls, and inside-outside touches to get comfortable with the ball.",
+                            duration: 15,
+                            difficulty: 2
+                        }
+                    ],
+                    goalkeeper: [
+                        {
+                            name: "Reaction Saves",
+                            description: "Partner throws balls at you from close range to improve reaction time and handling.",
+                            duration: 20,
+                            difficulty: 3
+                        },
+                        {
+                            name: "Cross Collection",
+                            description: "Practice catching crosses under pressure from teammates making runs into the box.",
+                            duration: 25,
+                            difficulty: 4
+                        }
+                    ],
+                    defender: [
+                        {
+                            name: "1v1 Defending",
+                            description: "Practice defensive stance, jockeying, and timing tackles against an attacker.",
+                            duration: 20,
+                            difficulty: 3
+                        },
+                        {
+                            name: "Passing Under Pressure",
+                            description: "Receive and distribute passes while under pressure from defenders.",
+                            duration: 25,
+                            difficulty: 4
+                        }
+                    ],
+                    midfielder: [
+                        {
+                            name: "Passing Triangles",
+                            description: "Work on quick passing and movement in small groups to maintain possession.",
+                            duration: 25,
+                            difficulty: 3
+                        },
+                        {
+                            name: "Long Ball Accuracy",
+                            description: "Practice hitting accurate long passes to teammates at varying distances.",
+                            duration: 20,
+                            difficulty: 4
+                        }
+                    ],
+                    forward: [
+                        {
+                            name: "Finishing Drills",
+                            description: "Various shooting exercises from different angles and distances to goal.",
+                            duration: 25,
+                            difficulty: 3
+                        },
+                        {
+                            name: "Movement Off the Ball",
+                            description: "Practice making runs to create space and lose defenders.",
+                            duration: 20,
+                            difficulty: 4
+                        }
+                    ],
+                    conditioning: [
+                        {
+                            name: "Interval Sprints",
+                            description: "Alternate between sprinting and jogging to build endurance and speed.",
+                            duration: 15,
+                            difficulty: 3
+                        },
+                        {
+                            name: "Agility Ladder",
+                            description: "Quick footwork drills through an agility ladder to improve coordination.",
+                            duration: 10,
+                            difficulty: 2
+                        }
+                    ],
+                    cooldown: [
+                        {
+                            name: "Static Stretching",
+                            description: "Hold stretches for all major muscle groups to improve flexibility and prevent injury.",
+                            duration: 10,
+                            difficulty: 1
+                        }
+                    ]
+                };
+                
+                // Determine drills based on day and position
+                let drills = [];
+                
+                // Always start with warmup
+                drills.push(allDrills.warmup[skillLevel > 2 ? 1 : 0]);
+                
+                // Position-specific drills
+                if (position === "Goalkeeper") {
+                    drills.push(allDrills.goalkeeper[dayIndex % 2]);
+                } else if (position === "Defender") {
+                    drills.push(allDrills.defender[dayIndex % 2]);
+                    if (dayIndex % 2 === 0) drills.push(allDrills.midfielder[0]);
+                } else if (position === "Midfielder") {
+                    drills.push(allDrills.midfielder[dayIndex % 2]);
+                    if (dayIndex % 2 === 0) drills.push(allDrills.forward[0]);
+                } else if (position === "Forward") {
+                    drills.push(allDrills.forward[dayIndex % 2]);
+                    if (dayIndex % 2 === 0) drills.push(allDrills.midfielder[1]);
+                } else {
+                    // Default for no position selected
+                    drills.push(allDrills.midfielder[dayIndex % 2]);
+                }
+                
+                // Add conditioning on certain days
+                if (dayIndex % 2 === 1) {
+                    drills.push(allDrills.conditioning[skillLevel > 2 ? 1 : 0]);
+                }
+                
+                // Always end with cooldown
+                drills.push(allDrills.cooldown[0]);
+                
+                // Adjust durations based on session length
+                const totalDuration = drills.reduce((sum, drill) => sum + drill.duration, 0);
+                const durationFactor = parseInt(duration) / totalDuration;
+                
+                return drills.map(drill => ({
+                    ...drill,
+                    duration: Math.round(drill.duration * durationFactor)
+                }));
+            }
+        });
+    </script>
+</body>
+</html>

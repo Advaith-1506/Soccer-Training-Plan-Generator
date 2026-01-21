@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+  <h2>Drills</h2>
+  <ul class="list">
+    {% for d in drills %}
+    <li>
+      <strong>{{ d.name }}</strong>
+      <span>Category: {{ d.category }}</span>
+      <span>Level: {{ d.level }}</span>
+      <span>Intensity: {{ d.intensity }}</span>
+      <span>Duration: {{ d.duration_minutes }}m</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/style.css">
+  <title>Soccer Training Automation</title>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/players">Players</a>
+      <a href="/drills">Drills</a>
+      <button id="themeToggle" class="theme-toggle focus-ring">Toggle Theme</button>
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <div id="confirmModal" class="modal-backdrop">
+    <div class="modal">
+      <h3>Confirm Changes</h3>
+      <p>Apply AI-related plan changes?</p>
+      <div class="actions">
+        <button id="modalCancel" class="btn ghost">Cancel</button>
+        <button id="modalConfirm" class="btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const root=document.documentElement;const key='ui-theme';const saved=localStorage.getItem(key);if(saved){root.setAttribute('data-theme',saved);}else{if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){root.setAttribute('data-theme','dark');}}
+    document.getElementById('themeToggle').addEventListener('click',()=>{const cur=root.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';root.setAttribute('data-theme',next);localStorage.setItem(key,next);});
+    const modal=document.getElementById('confirmModal');const modalCancel=document.getElementById('modalCancel');const modalConfirm=document.getElementById('modalConfirm');let _pendingForm=null;
+    function showModal(form){_pendingForm=form;modal.style.display='flex';}
+    function hideModal(){_pendingForm=null;modal.style.display='none';}
+    modalCancel.addEventListener('click',hideModal);modalConfirm.addEventListener('click',()=>{if(_pendingForm){_pendingForm.submit();}hideModal();});
+    document.querySelectorAll('form[data-confirm]').forEach(f=>{f.addEventListener('submit',(e)=>{e.preventDefault();showModal(f);});});
+    document.querySelectorAll('.progress').forEach(p=>{p.style.width='0%';setTimeout(()=>{p.style.transition='width 400ms ease-out';p.style.width=p.dataset.value||'100%';},50);});
+  </script>
+</body>
+</html>

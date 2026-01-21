@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="grid-3">
+  <div class="card kpi">
+    <span class="label">Players</span>
+    <span class="value">{{ kpi.players }}</span>
+    <span class="trend">+{{ kpi.players_trend }} this week</span>
+  </div>
+  <div class="card kpi">
+    <span class="label">Drills</span>
+    <span class="value">{{ kpi.drills }}</span>
+    <span class="trend">Updated catalog</span>
+  </div>
+  <div class="card kpi">
+    <span class="label">Avg Session Duration</span>
+    <span class="value">{{ kpi.avg_duration }}m</span>
+    <span class="trend">Target 60m</span>
+  </div>
+</section>
+<section class="actions" style="margin-top:16px">
+  <a class="btn" href="/players">Generate Session</a>
+  <a class="btn secondary" href="/players">Adjust Intensity</a>
+</section>
+<section style="margin-top:16px" class="grid-3">
+  <div class="card">
+    <h3>AI Insight</h3>
+    <p class="hint">Based on recent sessions, ball control drills are recommended to maintain progression pace.</p>
+    <span class="tag">AI Suggested</span>
+  </div>
+  <div class="card">
+    <h3>Readiness</h3>
+    <div class="progress-wrap"><div class="progress" data-value="68%"></div></div>
+    <p class="hint">Calculated from metrics; increases with consistent performance.</p>
+  </div>
+  <div class="card">
+    <h3>Next Steps</h3>
+    <ul class="list">
+      <li>Import player cohort</li>
+      <li>Create team plans</li>
+      <li>Review intensity caps</li>
+    </ul>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<div class="container mx-auto px-4 py-8">
+    <header class="mb-6">
+        <h1 class="text-3xl font-bold text-blue-600">AI Preview</h1>
+        <p class="text-gray-600">Ranked drills and explanations (non-invasive preview).</p>
+    </header>
+    <div class="bg-white rounded-xl shadow p-4 mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Select Player</label>
+        <select id="playerSelect" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+            {% for p in players %}
+            <option value="{{ p.id }}">{{ p.name }} ({{ p.position }}, {{ p.skill_level }})</option>
+            {% endfor %}
+            {% if players|length == 0 %}
+            <option value="">Demo Player</option>
+            {% endif %}
+        </select>
+        <button id="loadBtn" class="mt-3 bg-blue-600 text-white px-4 py-2 rounded">Load Recommendations</button>
+    </div>
+    <div id="readiness" class="text-sm text-gray-600 mb-3"></div>
+    <div id="results" class="grid grid-cols-1 gap-4"></div>
+</div>
+<script>
+document.getElementById('loadBtn').addEventListener('click', async function() {
+    const id = document.getElementById('playerSelect').value || '';
+    const res = await fetch(`/api/ai/preview/recommendations?player_id=${encodeURIComponent(id)}`);
+    const data = await res.json();
+    document.getElementById('readiness').textContent = `Readiness score: ${data.readiness}`;
+    const container = document.getElementById('results');
+    container.innerHTML = '';
+    data.recommendations.forEach((rec) => {
+        const div = document.createElement('div');
+        div.className = 'bg-white rounded-xl shadow p-4';
+        div.innerHTML = `
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-semibold">${rec.name}</h3>
+                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Score: ${rec.score}</span>
+            </div>
+            <p class="text-sm text-gray-600">Category: ${rec.category} • Intensity: ${rec.intensity} • Duration: ${rec.duration_minutes} min</p>
+            <div class="mt-2 text-xs text-gray-700"><span class="font-medium">Why:</span> ${rec.explanation}</div>
+        `;
+        container.appendChild(div);
+    });
+});
+</script>
+</body>
+</html>

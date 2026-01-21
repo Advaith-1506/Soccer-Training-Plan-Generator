@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+  <h2>Players</h2>
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Age</th><th>Position</th><th>Level</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for p in players %}
+      <tr>
+        <td>{{ p.name }}</td>
+        <td>{{ p.age }}</td>
+        <td><span class="tag">{{ p.position }}</span></td>
+        <td><span class="tag">{{ p.skill_level }}</span></td>
+        <td><a class="btn" href="/plans/{{ p.id }}">Generate Plan</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h3 style="margin-top:16px">Add Player</h3>
+  <form method="post" action="/players">
+    <label>Name <input class="focus-ring" type="text" name="name" required></label>
+    <label>Age <input class="focus-ring" type="number" name="age" min="6" max="60" required></label>
+    <label>Position
+      <select class="focus-ring" name="position" required>
+        {% for pos in positions %}
+        <option value="{{ pos }}">{{ pos }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Level
+      <select class="focus-ring" name="skill_level" required>
+        {% for lv in levels %}
+        <option value="{{ lv }}">{{ lv }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <button class="btn" type="submit">Create</button>
+  </form>
+  <p class="hint">Default metrics are empty; plans adapt as metrics are recorded.</p>
+</section>
+{% endblock %}
