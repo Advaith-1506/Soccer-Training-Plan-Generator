@@ -1,0 +1,16 @@
+# Local configuration; already tracked files remain tracked.
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+# Runtime state and logs; preserve any already tracked research/demo records.
+*.db
+*.sqlite
+*.sqlite3
+data/ai_logs.jsonl
+.DS_Store
